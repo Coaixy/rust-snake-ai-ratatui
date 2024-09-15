@@ -1,5 +1,5 @@
 // Game
-pub const GRID_SIZE: i32 = 10;
+pub const GRID_SIZE: i32 = 15;
 
 // Sim
 pub const NUM_AGENTS: usize = 1000;
@@ -17,7 +17,7 @@ pub const POP_NUM_RANDOM: f32 = 0.2;
 pub const SAVE_FILE_NAME: &str = "data/net.json";
 pub const LOAD_FILE_NAME: &str = "data/net-100-2.json";
 pub const IS_LOAD_SAVED_DATA: bool = false;
-pub const IS_SAVE_BEST_NET: bool = false;
+pub const IS_SAVE_BEST_NET: bool = true;
 
 // NN
 pub const NN_ARCH: [usize; 4] = [24, 16, 8, 4];
