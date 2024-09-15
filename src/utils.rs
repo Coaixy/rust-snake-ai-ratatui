@@ -8,6 +8,7 @@ pub struct Point {
     pub y: i32,
 }
 
+// 4 个方向
 #[derive(Debug, Clone, Copy, Default, PartialEq)]
 pub enum FourDirs {
     #[default]
@@ -24,10 +25,10 @@ pub fn get_eight_dirs() -> [(i32, i32); 8] {
         FourDirs::Right.value(),
         FourDirs::Bottom.value(),
         FourDirs::Top.value(),
-        (-1, 1),
-        (1, 1),
-        (1, -1),
-        (-1, -1),
+        (-1, 1), // 左上
+        (1, 1), // 右上
+        (1, -1), // 右下
+        (-1, -1), // 左下
     ]
 }
 

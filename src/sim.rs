@@ -8,18 +8,27 @@ use crate::pop::Population;
 use crate::viz::Viz;
 
 pub struct Simulation {
+    // 生成次数
     gen_count: usize,
+
     pop: Population,
+    // UI
     viz: Viz,
+    // 生成开始的时刻
     gen_start_ts: Instant,
+    //最大积分
     max_score: usize,
 }
 
 #[derive(Default, Clone, Copy)]
 pub struct GenerationSummary {
+    // 生成次数
     pub gen_count: usize,
+    // 耗时
     pub time_elapsed_secs: f32,
+    // 本次最大积分
     pub gen_max_score: usize,
+    // 总最大积分
     pub sim_max_score: usize,
 }
 

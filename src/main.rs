@@ -7,11 +7,16 @@ use sim::Simulation;
 use snake_tui::{sim, NUM_THREADS};
 
 fn main() -> io::Result<()> {
+    // 并行计算
     rayon::ThreadPoolBuilder::new()
+        // 设置线程数
         .num_threads(NUM_THREADS)
         .build_global()
         .unwrap();
-
+    /***
+        Simulation 模拟
+        last_poll 当前时刻
+     */
     let mut sim = Simulation::new()?;
     let mut last_poll = Instant::now();
 

@@ -33,8 +33,11 @@ const COLOR_DEAD: Color = Color::Indexed(205);
 const COLOR_FOOD: Color = Color::LightGreen;
 
 pub struct Viz {
+    // 场景数
     frame_count: u32,
+    // 可视化数据
     data: VizData,
+    // 终端
     term: Terminal<CrosstermBackend<Stdout>>,
 }
 
@@ -53,12 +56,19 @@ struct NNColors {
 }
 
 struct VizData {
+    // 个体
     agent: Option<Agent>,
+    // 摘要
     stats: GenerationSummary,
+    // 模拟开始时间
     sim_start_ts: Instant,
+    // 分数
     scores: Vec<u64>,
+    // 代数时间
     gen_times: Vec<u64>,
+    // 突变率
     mutation_rate: f64,
+    // 突变幅度
     mutation_magnitude: f64,
 }
 
@@ -70,11 +80,11 @@ impl Viz {
             term: TermViz::init_terminal()?,
         })
     }
-
+    // 更新个体
     pub fn update_brain(&mut self, new_brain: Net) {
         self.data.agent = Some(Agent::with_brain(new_brain));
     }
-
+    // 更新摘要
     pub fn update_summary(&mut self, stats: GenerationSummary, mr: f64, mg: f64) {
         self.data.stats = stats;
         self.data.mutation_rate = mr;
@@ -91,7 +101,7 @@ impl Viz {
             self.data.gen_times.remove(0);
         }
     }
-
+    // 更新
     pub fn update(&mut self) {
         if self.data.agent.is_none() {
             return;
@@ -110,11 +120,11 @@ impl Viz {
             self.data.agent = Some(Agent::with_brain(agent.brain.clone()));
         }
     }
-
+    // 绘制
     pub fn draw(&mut self) {
         let _ = self.term.draw(|f| TermViz::draw(f, &self.data));
     }
-
+    // 保存
     pub fn restore_terminal() -> io::Result<()> {
         disable_raw_mode()?;
         stdout().execute(LeaveAlternateScreen)?;
@@ -366,7 +376,7 @@ impl TermViz {
                     agent.game.no_food_steps,
                     agent.get_step_limit()
                 )
-                .as_str(),
+                    .as_str(),
             );
         }
 

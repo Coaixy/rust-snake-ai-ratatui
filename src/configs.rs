@@ -1,10 +1,10 @@
 // Game
-pub const GRID_SIZE: i32 = 15;
+pub const GRID_SIZE: i32 = 10;
 
 // Sim
 pub const NUM_AGENTS: usize = 1000;
 pub const NUM_STEPS: usize = 75;
-pub const NUM_THREADS: usize = 8;
+pub const NUM_THREADS: usize = 16;
 
 // Pop
 pub const POP_RETAINED: f32 = 0.1;

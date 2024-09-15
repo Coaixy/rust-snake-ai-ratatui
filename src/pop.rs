@@ -15,22 +15,23 @@ use crate::{
 };
 
 pub struct Population {
+    // 突变幅度
     pub mutation_magnitude: f64,
+    // 突变率
     pub mutation_rate: f64,
-
+    // 个体列表
     agents: Vec<Agent>,
 }
-
 impl Default for Population {
     fn default() -> Self {
         Self::new()
     }
 }
-
 impl Population {
     #[must_use]
     pub fn new() -> Self {
         let mut agents = Vec::new();
+        // 生成个体
         for _ in 0..NUM_AGENTS {
             agents.push(Agent::new(IS_LOAD_SAVED_DATA));
         }
@@ -90,30 +91,31 @@ impl Population {
             .unwrap_or(0);
         let (mutation_mag, mutation_rate) = Self::get_mutation_params(gen_max_score as f64);
 
-        // Sort agents based on their fitness
+        // 根据合适度对个体进行排序
         let mut agents_sorted = self.agents.clone();
         agents_sorted.sort_by(|a, b| b.partial_cmp(a).unwrap_or(Ordering::Equal));
 
         // Population Distribution
+        // 保留最好的个体
         let num_elite = (NUM_AGENTS as f32 * POP_RETAINED) as usize;
+        // 通过轮盘赌选择
         let num_roulette = (NUM_AGENTS as f32 * POP_ROULETTE) as usize;
+        // 通过锦标赛选择
         let mut num_tournament = (NUM_AGENTS as f32 * POP_TOURNAMENT) as usize;
+        // 通过突变保留
         let num_mutated = (NUM_AGENTS as f32 * POP_RETAINED_MUTATED) as usize;
+        // 全随机
         let num_random = (NUM_AGENTS as f32 * POP_NUM_RANDOM) as usize;
 
-        // Elitism
-        // Preserve best performing agents
-        // Hels maintain high fitness levels within the population
+        // 保留好的个体
         let mut new_agents: Vec<_> = agents_sorted
             .iter()
             .take(num_elite)
             .map(|agent| Agent::with_brain(agent.brain.clone()))
             .collect();
-
         new_agents.reserve(NUM_AGENTS - num_elite);
 
-        // Roulette Selection (or Fitness Proportionate Selection)
-        // Each agent is selected with a probability proportional to its fitness
+        // 轮盘赌
         let gene_pool = self.generate_gene_pool();
         if let Some(pool) = gene_pool {
             let mut rng = rand::thread_rng();
@@ -177,7 +179,7 @@ impl Population {
 
         best_agent
     }
-
+    // 生成基因池
     fn generate_gene_pool(&self) -> Option<WeightedIndex<f32>> {
         let mut max_fitness = 0.0;
         let mut weights = Vec::new();
@@ -198,7 +200,7 @@ impl Population {
 
         WeightedIndex::new(&weights).ok()
     }
-
+    // 获取突变参数
     fn get_mutation_params(gen_max: f64) -> (f64, f64) {
         let max_score = f64::from((GRID_SIZE - 1) * (GRID_SIZE - 1));
         if gen_max > 0.75 * max_score {

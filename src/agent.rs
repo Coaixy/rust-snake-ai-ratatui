@@ -6,15 +6,23 @@ use nn::Net;
 use crate::game::Game;
 use crate::{get_eight_dirs, nn, FourDirs, Point, NN_ARCH, NUM_STEPS};
 
+
+// 个体对象
 #[derive(Clone)]
 pub struct Agent {
+    // 游戏实例
     pub game: Game,
+    // 神经网络
     pub brain: Net,
 }
 
 impl Agent {
     #[must_use]
     pub fn new(is_load: bool) -> Self {
+        /***
+            如果启动了读取的话就加载神经网络
+            否则的话生成新的网络
+         */
         let brain = if is_load {
             let mut net = Net::load();
             net.mutate(0.0, 0.1);
@@ -52,7 +60,7 @@ impl Agent {
 
         true
     }
-
+    // 适应度函数
     #[must_use]
     pub fn fitness(&self) -> f32 {
         let score = self.game.body.len() as f32;
@@ -75,8 +83,11 @@ impl Agent {
 
     #[must_use]
     pub fn get_brain_output(&self) -> FourDirs {
+        // 获取输入
         let vision = self.get_brain_input();
+        // 预测
         let nn_out = self.brain.predict(vision);
+        // 获取最大的方向
         let (l, r, b, t) = (nn_out[0], nn_out[1], nn_out[2], nn_out[3]);
         let mut directions = [
             (l, FourDirs::Left),
@@ -90,11 +101,15 @@ impl Agent {
 
     #[must_use]
     pub fn get_brain_input(&self) -> Vec<f64> {
+        // 获取八个方向
         let dirs = get_eight_dirs().to_vec();
+        // 获取视野的数据
         let vision = self.get_snake_vision(dirs);
+        // 获取头的方向
         let head_dir = self.game.dir.get_one_hot_dir();
+        // 获取尾巴的方向
         let tail_dir = self.get_tail_direction().get_one_hot_dir();
-
+        // 合并数据
         vision.into_iter().chain(head_dir).chain(tail_dir).collect()
     }
 
@@ -113,18 +128,20 @@ impl Agent {
 
     fn vision_in_dir(&self, st: Point, dir: (i32, i32)) -> (f32, bool) {
         let mut food = false;
+        // 头的坐标
         let mut temp_pt: Point = st;
         let mut dist = 0;
 
         loop {
+            // 墙或者身体
             if self.game.is_wall(temp_pt) || self.game.is_snake_body(temp_pt) {
                 break;
             }
-
+            // 食物
             if self.game.food == temp_pt {
                 food = true;
             }
-
+            // 新的坐标 计算出8个未知的坐标
             temp_pt = Point::new(temp_pt.x + dir.0, temp_pt.y + dir.1);
 
             dist += 1;
@@ -132,7 +149,7 @@ impl Agent {
                 break;
             }
         }
-
+        // 返回距离和是否有食物
         (1.0 / dist as f32, food)
     }
 
